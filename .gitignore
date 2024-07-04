@@ -1,0 +1,15 @@
+# Ignore node_modules directory
+node_modules/
+
+.env
+# Ignore log files
+*.log
+.env.example.js
+
+# Ignore compiled files
+*.class
+*.o
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
