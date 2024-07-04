@@ -18,17 +18,13 @@ app.use(cors({
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-app.use('/ping', function (req, res) {
-    res.send("/pong");
-});
 
 app.use('/api/v1/user', userRouter)
+app.use('/ping', function (req, res) {
+    res.send("Pong");
+});
 
-
-
-
+app.use(errorMiddleware);
 app.all('*', (req, res) => {
     res.status(404).send('Page not found');
 })
-
-app.use(errorMiddleware);
