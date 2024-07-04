@@ -52,11 +52,13 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
-    this.password = await bcrypt.hash(this.passsword, 10);
+    this.password = await bcrypt.hash(this.password, 10);
 })
+userSchema.methods.comparePassword = async function (plainTextPassword) {
+    return await bcrypt.compare(plainTextPassword, this.password);
+};
 
-userSchema.methods = {
-    generateJWTToken: async function () {
+userSchema.methods.generateJWTToken =  async function () {
         return await jwt.sign(
             {
                 id: this._id,
@@ -70,7 +72,8 @@ userSchema.methods = {
             }
         )
     }
-}
+
+
 
 const User = model('User', userSchema);
 export default User;
