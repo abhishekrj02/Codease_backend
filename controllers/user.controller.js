@@ -117,6 +117,9 @@ const login = async (req, res, next) => {
 }
 
 const logout = (req, res, next) => {
+    if (!req.cookies || !req.cookies.token) {
+        return next(new AppError('Login first...', 400));
+    }
     res.cookie('token', null, {
         secure: true,
         maxAge: 0,
@@ -212,4 +215,81 @@ const resetPassword = async (req, res, next) => {
     }
 }
 
-export { register, login, logout, getProfile, forgotPassword, resetPassword };
+const changePassword = async (req, res, next) => {
+    try{
+    const { oldPassword, newPassword } = req.body;
+    const { id } = req.user;
+    if (!oldPassword || !newPassword) {
+        return next(new AppError('All field neccessary', 400))
+    }
+
+    const user = await User.findById(id).select('+password')
+    if (!user) {
+        return next(new AppError('User doesnt exists', 400))
+    }
+    const isPasswordValid = await user.comparePassword(oldPassword);
+    if (!isPasswordValid) {
+        return next(new AppError('Invalid password', 400))
+    }
+
+    user.password = newPassword;
+    await user.save();
+    user.password = undefined;
+    res.status(200).json({
+        success: true,
+        message: 'Password changed successfully'
+    })}catch(e){
+        return next(new AppError(e.message,500))
+    }
+}
+
+const updateUser = async (req, res, next) => {
+    const { fullName } = req.body;
+    const id  = req.user.id;
+    const user = await User.findById(id);
+    console.log(user);
+    if (!user) {
+        return next(new AppError('User doesnt exists', 400))
+    }
+
+    if (fullName) {
+        user.fullName = fullName;
+    }
+    console.log(user.fullName);
+    console.log(req.file);
+    if (req.file) {
+        await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+        try {
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder: 'lms',
+                width: 250,
+                height: 250,
+                gravity: 'faces',
+                crop: 'fill'
+            });
+
+            user.avatar.public_id = result.public_id;
+            user.avatar.secure_url = result.secure_url;
+
+            fs.rm(`uploads/${req.file.filename}`, (err) => {
+                if (err) {
+                    console.error(`Error removing file: ${err}`);
+                } else {
+                    console.log('File removed successfully');
+                }
+            });
+        } catch (error) {
+            return next(new AppError(error.message || 'File not uploaded', 500));
+        }
+    }
+
+    await user.save();
+    res.status(200).json({
+        success: true,
+        message: 'User details updated successfully!'
+    })
+
+}
+
+
+export { register, login, logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser };

@@ -5,7 +5,7 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import userRouter from "./routes/user.routes.js";
 import errorMiddleware from "./middleware/error.middleware.js";
-
+import courseRouter from "./routes/course.routes.js";
 
 config();
 export const app = express();
@@ -21,6 +21,7 @@ app.use(morgan('dev'));
 
 
 app.use('/api/v1/user', userRouter)
+app.use('/api/v1/courses', courseRouter)
 app.use('/ping', function (req, res) {
     res.send("Pong");
 });
