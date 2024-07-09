@@ -40,10 +40,10 @@ To get a local copy up and running, follow these simple steps.
 
 ## Installation
 
-\`\`\`bash
+```bash
 git clone https://github.com/yourusername/lms-backend.git
 cd lms-backend
-\`\`\`
+```
 
 ## Contributing
 
@@ -51,8 +51,17 @@ Contributions are what make the open-source community such an amazing place to l
 
 
 - Fork the Project
-- Create your Feature Branch (git checkout -b feature/AmazingFeature)
-- Commit your Changes (git commit -m 'Add some AmazingFeature')
-- Push to the Branch (git push origin feature/AmazingFeature)
+- Create your Feature Branch
+```bash
+git checkout -b feature/Feature
+```
+- Commit your Changes
+```bash
+git commit -m 'Add some Feature'
+```
+- Push to the Branch
+```bash
+git push origin feature/Feature1
+```
 - Open a Pull Request
 
