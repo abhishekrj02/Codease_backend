@@ -143,11 +143,13 @@ const addLectureToCourseById = async (req, res, next) => {
         const lectureData = {
             title,
             description,
-            lecture:{}
+            lecture: {}
         };
         if (req.file) {
             const result = await cloudinary.v2.uploader.upload(req.file.path, {
-                folder: 'lms'
+                folder: 'lms',
+                chunk_size: 50000000, // 50 mb size
+                resource_type: 'video',
             });
             if (result) {
                 lectureData.lecture.public_id = result.public_id;
@@ -170,4 +172,44 @@ const addLectureToCourseById = async (req, res, next) => {
 
 }
 
-export { getAllCourses, getLecturesByCourseId, createCourse, updateCourse, removeCourse, addLectureToCourseById };
+const removeLectureFromCourse = async (req, res, next) => {
+    try {
+        const { courseId, lectureId } = req.query;
+        
+        if (!courseId) {
+            return next(new AppError('Course ID is required', 400));
+        }
+
+        if (!lectureId) {
+            return next(new AppError('Lecture ID is required', 400));
+        }
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return next(new AppError('Invalid ID or Course does not exist.', 404));
+        }
+        const lectureIndex = course.lectures.findIndex(
+            (lecture) => lecture._id.toString() === lectureId.toString()
+        );
+        if (lectureIndex === -1) {
+            return next(new AppError('Lecture does not exist.', 404));
+        }
+        await cloudinary.v2.uploader.destroy(
+            course.lectures[lectureIndex].lecture.public_id,
+            {
+                resource_type: 'video',
+            }
+        );
+        course.lectures.splice(lectureIndex, 1);
+        course.numberOfLectures = course.lectures.length;
+        await course.save();
+        res.status(200).json({
+            success: true,
+            message: 'Course lecture removed successfully',
+        });
+    } catch (e) {
+        return next(new AppError(e.message, 500))
+    }
+
+}
+export { getAllCourses, getLecturesByCourseId, createCourse, updateCourse, removeCourse, addLectureToCourseById, removeLectureFromCourse };
