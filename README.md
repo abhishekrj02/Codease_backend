@@ -1,6 +1,6 @@
-# Learning Management System: Backend
+# CodEase: Backend
 
-This repository contains the backend code for a Learning Management System (LMS) built with Node.js, Mongoose, Express, Nodemailer, Multer, Cloudinary, Razorpay, bcrypt, and crypto.
+This repository contains the backend code for a Learning Management System (CodEase)  built with Node.js, Mongoose, Express, Nodemailer, Multer, Cloudinary, Razorpay, bcrypt, and crypto.
 
 ## Table of Contents
 1. [Features](#features)
@@ -41,8 +41,8 @@ To get a local copy up and running, follow these simple steps.
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/lms-backend.git
-cd lms-backend
+git clone https://github.com/abhishekrj02/Codease_backend.git
+cd Codease_backend
 ```
 
 ## Contributing
