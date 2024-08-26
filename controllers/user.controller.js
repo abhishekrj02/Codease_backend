@@ -30,7 +30,7 @@ const register = async (req, res, next) => {
 
         // Attempt to upload the file if it exists
         if (req.file) {
-            console.log(req.file)
+            
             try {
                 const result = await cloudinary.v2.uploader.upload(req.file.path, {
                     folder: 'lms',
@@ -247,7 +247,7 @@ const updateUser = async (req, res, next) => {
     const { fullName } = req.body;
     const id  = req.user.id;
     const user = await User.findById(id);
-    console.log(user);
+    // console.log(user);
     if (!user) {
         return next(new AppError('User doesnt exists', 400))
     }
@@ -255,8 +255,8 @@ const updateUser = async (req, res, next) => {
     if (fullName) {
         user.fullName = fullName;
     }
-    console.log(user.fullName);
-    console.log(req.file);
+    // console.log(user.fullName);
+    // console.log(req.file);
     if (req.file) {
         await cloudinary.v2.uploader.destroy(user.avatar.public_id);
         try {

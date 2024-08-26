@@ -10,13 +10,14 @@ import paymentRouter from "./routes/payment.routes.js";
 
 config();
 export const app = express();
-
+console.log(process.env.FRONTEND_URL)
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors({
     origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
+
 app.use(cookieParser());
 app.use(morgan('dev'));
 
