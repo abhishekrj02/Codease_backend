@@ -3,7 +3,6 @@ import { getAllCourses, getLecturesByCourseId, createCourse, updateCourse, remov
 import { isLoggedIn, authorizedRoles, authorizeSubscriber } from "../middleware/auth.middleware.js";
 import upload from "../middleware/multer.middleware.js";
 const router = Router();
-
 router.route('/')
     .get(getAllCourses)
     .post(
@@ -21,5 +20,5 @@ router.route('/:id')
     .delete(isLoggedIn, authorizedRoles('ADMIN'), removeCourse)
     .post(isLoggedIn, authorizedRoles('ADMIN'), upload.single('lecture'), addLectureToCourseById)
 
-
+//thest is test
 export default router;
