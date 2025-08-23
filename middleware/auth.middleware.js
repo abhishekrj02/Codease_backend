@@ -1,17 +1,23 @@
 import AppError from "../utils/error.util.js";
 import jwt from "jsonwebtoken";
-const isLoggedIn = async (req, res, next) => {
+
+const isLoggedIn = (req, res, next) => {
+  try {
     const { token } = req.cookies;
 
     if (!token) {
-        return next(new AppError('Authentication failed', 401));
+      return next(new AppError("Authentication failed: No token provided", 401));
     }
 
     const userDetails = jwt.verify(token, process.env.JWT_SECRET);
     req.user = userDetails;
 
     next();
-}
+  } catch (err) {
+    return next(new AppError("Authentication failed: Invalid or expired token", 401));
+  }
+};
+
 const authorizedRoles = (...roles) => async (req, res, next) => {
     const currentUserRoles = req.user.role;
     if (!roles.includes(currentUserRoles)) {
@@ -20,7 +26,7 @@ const authorizedRoles = (...roles) => async (req, res, next) => {
     next();
 }
 
-const authorizeSubscriber = async () => {
+const authorizeSubscriber = async (req,res,next) => {
     const subscription = req.user.subscription;
     const currentUserRoles = req.user.role;
     if(currentUserRoles !== 'ADMIN' && subscription.status !=='active'){
